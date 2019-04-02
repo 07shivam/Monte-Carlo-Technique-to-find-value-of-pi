@@ -1,0 +1,88 @@
+# Monte-Carlo-Technique-to-find-value-of-pi
+-# Monte-Carlo-Technique-to-find-value-of-pi
+-#include <stdio.h>
+-#include <pthread.h>
+-#include <stdlib.h>
+-#include <math.h> 
+-
+-
+-#define Number_of_threads 5
+-#define Tc 10000055 
+-pthread_mutex_t t2;
+-
+-void *Something(void *tid1)
+-{
+-   long longTid;
+-   longTid = (long)tid1;
+-   int tid = (int)longTid;   
+-   float *count = (float *)malloc(sizeof(float));
+-   *count=0;   
+-   float Total= Tc/Number_of_threads;
+-   int counter=0;
+-   
+-   for(counter=0;counter<Total;counter++)
+-     { 
+-	float x = Random1();
+-        float y = Random1();
+-        float result = sqrt((x*x) + (y*y));
+-      
+-	if(result<1){
+-         *count+=1;       
+-     }
+-	pthread_mutex_lock(&mutex);
+-	count=count+1;
+-	pthread_mutex_lock(&mutex);    
+-   }
+-   if(tid==0)
+-     {
+-      
+-	float rem = Tc%Number_of_threads;
+-        for(counter=0;counter<rem;counter++){
+-        float x = Random1();
+-        float y = Random1();
+-      
+-        float result = sqrt((x*x) + (y*y));
+-        
+-        if(result<1)
+-	  {
+-           *count+=1;
+-          } 
+-	pthread_mutex_lock(&mutex);
+-	count=count+1;
+-	pthread_mutex_lock(&mutex);
+-     }
+- pthread_exit((void *)count);
+-   }
+-}
+-
+-float Random1()
+-{
+-   int r_value = rand();   
+-   float unit_random = r_value / (float) RAND_MAX; 
+-   return unit_random;
+-}
+-
+-int main(int argc, char *argv[])
+-{
+-   pthread_t threads[Number_of_threads];
+-   int p;
+-   long t;
+-   void *s;
+-   float t1=0;
+-   for(t=0;t<Number_of_threads;t++)
+-      {
+-       p = pthread_create(&threads[t],NULL,Something,(void *)t);
+-       if(p){
+-           printf("ERROR %d\n",p);
+-           exit(-1);
+-             }
+-       }
+-   for(t=0;t<Number_of_threads;t++)
+-     {      
+-      pthread_join(threads[t],&s);
+-      t1=(t1)+(*(float*)s);
+-     }
+-     printf("Value for Pi is %f \n",1, 4*(t1/Tc));
+-     pthread_exit(NULL);
+-}
+
